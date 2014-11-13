@@ -5,6 +5,9 @@
  *      Author: lester
  */
 
+// disable hardware acceleration to fix segmentation fault
+// LIBGL_ALWAYS_INDIRECT=1
+
 // source http://www.codeproject.com/Articles/182109/Setting-up-an-OpenGL-development-environment-in-Ub
 
 #include "GL/freeglut.h"
