@@ -1,5 +1,6 @@
 /*
  * main.cpp
+ * apt-get install freeglut3 freeglut3-dev libghc-opengl-dev libglew-dev
  *
  *  Created on: 13 Nov 2014
  *      Author: lester
