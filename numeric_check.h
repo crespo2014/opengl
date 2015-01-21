@@ -48,10 +48,11 @@ namespace Range
      * a <= b resumes to do a casting to a or b base on sizeof B,A and typeof A
      */
     template<size_t a,size_t b,bool intA>
-    struct _cast_to_a_
+    struct _le_cast_to_a_
     {
         constexpr static const bool value = (a > b) ? true : (a < b) ? false : intA ? false : true;
     };
+
     // Casting to A default implementation
     template<bool cast_to_a = true>
     struct _less_equal
@@ -72,67 +73,6 @@ namespace Range
             return (static_cast<B>(a) <= b);
         }
     };
-
-
-    /*
-    promotion will compare doing cast of the first or second type
-    if both parameter are equal promotions is done to uint
-    */
-    template<char size_cmp>
-    struct _impl2_
-    {
-        // is it uint less equal than int
-        template<class A,class B>
-        inline static bool uint_le_int(A a,B b)
-        {
-            return (a <= static_cast<A>(b));
-        }
-
-        // is int number less equal than uint
-        template<class A,class B>
-        inline static bool int_le_uint(A a,B b)
-        {
-            return (static_cast<B>(a) <= b);
-        }
-    };
-    // sizeof A > sizeof B
-    template<>
-    struct _impl2_<1>
-    {
-        // is it uint less equal than int
-        template<class A,class B>
-        inline static bool uint_le_int(A a,B b)
-        {
-            return (a <= static_cast<A>(b));
-        }
-
-        // is int number less equal than uint
-        template<class A,class B>
-        inline static bool int_le_uint(A a,B b)
-        {
-            return (a<= static_cast<A>(b));
-        }
-    };
-
-    // sizeof A < sizeof B
-    template<>
-    struct _impl2_<2>
-    {
-        // is it uint less equal than int
-        template<class A,class B>
-        inline static bool uint_le_int(A a,B b)
-        {
-            return (a <= static_cast<A>(b));
-        }
-
-        // is int number less equal than uint
-        template<class A,class B>
-        inline static bool int_le_uint(A a,B b)
-        {
-            return (static_cast<B>(a) <= b);
-        }
-    };
-
     /*
      * Parameter
      * is A int, is B int
@@ -153,7 +93,7 @@ namespace Range
         template<class A,class B>
         static inline bool less_than(A a,B b)
         {
-            return (b >=0) && _impl2_< _size_compare<sizeof(A),sizeof(B)>::value >::uint_le_int(a,b);
+            return (b >=0) && _less_equal< _le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
         }
     };
     // Specialization for int uint
@@ -163,7 +103,7 @@ namespace Range
         template<class A,class B>
         static inline bool less_than(A a,B b)
         {
-            return (a <=0) || _impl2_< _size_compare<sizeof(A),sizeof(B)>::value >::int_le_uint(a,b);
+            return (a <=0) || _less_equal< _le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
         }
     };
 
