@@ -18,6 +18,8 @@
 #include "GraphBuffer.h"
 #include "numeric_check.h"
 
+#include <functional>
+
 
 void DrawEdges() {
 	const static float mark_size = 0.2;

@@ -10,25 +10,22 @@
 
 
 /*
- * to do safe range check.
- * We are going to implement less_equal function in two phases
+ * To do safe range check.
+ * We are going to implement less_equal function
  *
  * a <=b
- * int uint --> (a <=0) || ( b>= (B)a && a<= (A)b)
- * uint int --> (b >=0) && a <= (A)b && b>= (B)a
+ * int uint --> (a <= 0) || ( b >= (B)a  && a <= (A)b )
+ * uint int --> (b >= 0) && ( a <= (A)b  && b >= (B)a )
  *
- * all comparation is done from positive numbers
+ * all comparation is done using positive numbers
  *
- * if numbers have same size. int is safe to be uint
- * int < uint is safe to uint
- * uint < int is safe to be int
- * int = uint is safe to cast uint
+ * if numbers have same size. int can be safe promoted to uint
  *
- * a <=b
- * int uint --> (a <=0) ||  [ (uint)a <= b | a <= (int)b ]
- * uint int --> (b >=0) ||  [ (uint)a <= b | a <= (int)b ]
+ *  a <= b
+ * int  uint --> (a <=0) ||  [ (uint)a <= b | a <= (int)b ]
+ * uint int  --> (b >=0) ||  [ (uint)a <= b | a <= (int)b ]
  *
- * The question is cast to B or A
+ * The question is. cast to B or to A?
  *
  *  size A = size B
  *  uint <= int  A
@@ -143,7 +140,6 @@ namespace Range
         b = less_equal(c, ui);
         b= (c <=0) || (static_cast<unsigned int>(c) <= ui);
         b= (c <=0) || (c <= static_cast<char>(ui));
-        b= false;
     }
 }
 

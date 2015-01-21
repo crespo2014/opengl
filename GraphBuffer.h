@@ -19,6 +19,10 @@ class GraphBuffer
 public:
     GraphBuffer(unsigned size);
     virtual ~GraphBuffer();
+    // Push a new value into the buffer
+    void push(T v);
+    // wait for data
+    // notify new data
     class rd_it
     {
         GraphBuffer& buffer_;
@@ -72,6 +76,13 @@ template<class T>
 inline T GraphBuffer<T>::rd_it::get() const
 {
     return *rd_ptr;
+}
+
+template<class T>
+inline void GraphBuffer<T>::push(T v)
+{
+    data_[wr_pos_++] = 0;
+    if (wr_pos_ == size_) wr_pos_ =0;
 }
 
 #endif /* GRAPHBUFFER_H_ */
