@@ -81,7 +81,7 @@ namespace Range
     struct _impl1_
     {
         template<class A,class B>
-        static inline bool less_than(A a,B b)
+        static inline bool less_equal(A a,B b)
         {
             return a <= b;
         }
@@ -91,7 +91,7 @@ namespace Range
     struct _impl1_<false,true>
     {
         template<class A,class B>
-        static inline bool less_than(A a,B b)
+        static inline bool less_equal(A a,B b)
         {
             return (b >=0) && _less_equal< _le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
         }
@@ -101,17 +101,28 @@ namespace Range
     struct _impl1_<true,false>
     {
         template<class A,class B>
-        static inline bool less_than(A a,B b)
+        static inline bool less_equal(A a,B b)
         {
             return (a <=0) || _less_equal< _le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
         }
     };
 
+    template<class A, class B>
+    static bool less_equal(A a, B b)
+    {
+        return _impl1_<std::is_signed<A>::value,std::is_signed<B>::value>::less_equal(a, b);
+    }
+
     template<class V, class T>
     static bool check(V v, T start, T end)
     {
-        return _impl1_<std::is_signed<T>::value,std::is_signed<V>::value>::less_than(start, v) &&
-               _impl1_<std::is_signed<V>::value,std::is_signed<T>::value>::less_than(v, end);
+        return less_equal(start, v) && less_equal(v, end);
+    }
+
+    void test()
+    {
+        std::cout << check((char)-1,(unsigned char)0,(unsigned char)4) << std::endl;
+
     }
 }
 

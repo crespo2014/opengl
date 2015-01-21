@@ -82,14 +82,7 @@ void resized(int, int) {
  the freeglut library does the window creation work for us,
  regardless of the platform. */
 int main(int argc, char** argv) {
-    int i = -3;
-    uint u = 8;
-    std::cout << Range::check(i,u,u) << std::endl;
-    std::cout << Range::check(u,i,i) << std::endl;
-    std::cout << Range::check(u,u,u) << std::endl;
-    std::cout << Range::check(i,i,i) << std::endl;
-
-    std::cout << Range::check((char)-1,uint(0),uint(4)) << std::endl;
+    Range::test();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE);
