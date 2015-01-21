@@ -14,6 +14,8 @@
 
 #include <math.h>
 #include <unistd.h>
+#include <iostream>
+#include "GraphBuffer.h"
 
 
 void DrawEdges() {
@@ -79,6 +81,10 @@ void resized(int, int) {
  the freeglut library does the window creation work for us,
  regardless of the platform. */
 int main(int argc, char** argv) {
+    std::cout << Range::check(3,-2,5) << std::endl;
+    std::cout << Range::check(-3,-2,5) << std::endl;
+    std::cout << Range::check(-3,0,5) << std::endl;
+    std::cout << Range::check(3,-2,-1) << std::endl;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE);
 	glutInitWindowSize(500, 500);

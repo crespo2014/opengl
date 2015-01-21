@@ -14,33 +14,49 @@
 // Range validation
 class Range
 {
-    template<bool VI, bool TI,class V,class T>
-    static bool check_impl_(V v, T start, T end);
-
     // true means signed number
-    template<bool VI, bool TI,class V,class T>
+    template<bool VI, bool TI>
     class range_impl_
     {
         friend class Range;
-        //template<class V, class T>
-        static bool check(V v, T start, T end);
-//        {
-//            return (v >= start) && (v <= end);
-//        }
+        template<class T>
+        static bool check(T v, T start, T end)
+        {
+            return (v >= start) && (v <= end);
+        }
     };
 public:
     template<class V, class T>
     static bool check(V v, T start, T end)
     {
-        return range_impl_<std::is_signed<V>::value,std::is_signed<T>::value,V,T>::check(v, start, end);
+        return range_impl_<std::is_signed<V>::value,std::is_signed<T>::value>::check(v, start, end);
     }
 };
 
-template<class V, class T>
-bool Range::check_impl_<true,false,V,T>(V v, T start, T end)
+// comparing a int between a range of uint
+template<>
+class Range::range_impl_<true,false>
 {
-    return false;
-}
+    friend class Range;
+    template<class V, class T>
+    static bool check(V v, T start, T end)
+    {
+        static_assert(sizeof(T) >= sizeof(V),"Size of unsigned number has to be equal or more");
+        return (v > 0) && (static_cast<T>(v) >= start) && (static_cast<T>(v) <= end);
+    }
+};
+
+// check a uint in a int range
+template<>
+class Range::range_impl_<false,true>
+{
+    friend class Range;
+    template<class V, class T>
+    static bool check(V v, T start, T end)
+    {
+        return (end > 0) && (v <= static_cast<T>(end)) && ((start <=0 ) || (v >= static_cast<T>(start)));
+    }
+};
 
 template<class T>		// value type
 class GraphBuffer
