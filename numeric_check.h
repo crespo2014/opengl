@@ -42,7 +42,12 @@
 namespace Range
 {
     /*
-     * a <= b resumes to do a casting to a or b base on sizeof B,A and typeof A
+     * if sizeof A > sizeof B then casting to A
+     * if sizeof A < sizeof B then casting to B
+     * if sizeof A == sizeof A then
+     *  if A is signed cast to B else cast to A
+     *
+     * true means static cast to A
      */
     template<size_t a,size_t b,bool intA>
     struct _le_cast_to_a_
