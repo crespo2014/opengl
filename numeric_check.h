@@ -121,8 +121,29 @@ namespace Range
 
     void test()
     {
-        std::cout << check((char)-1,(unsigned char)0,(unsigned char)4) << std::endl;
+        volatile char c = 7;
+        volatile unsigned char uc = 0xAA;
+        volatile int i = -1;
+        volatile unsigned int ui = 0xF000;
+        volatile bool b;
 
+        b = less_equal(c, uc);
+        b = less_equal(uc, c);
+
+        b = less_equal(c, i);
+        b = less_equal(i, c);
+
+        b = less_equal(ui, uc);
+        b = less_equal(uc, ui);
+
+        b = less_equal(i, uc);
+        b = less_equal(uc, i);
+        b = less_equal(ui, c);
+
+        b = less_equal(c, ui);
+        b= (c <=0) || (static_cast<unsigned int>(c) <= ui);
+        b= (c <=0) || (c <= static_cast<char>(ui));
+        b= false;
     }
 }
 
