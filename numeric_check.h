@@ -9,11 +9,9 @@
 #define NUMERIC_CHECK_H_
 
 
-
 /*
  * to do safe range check.
  * We are going to implement less_equal function in two phases
- * a <=b with promotions. both numbers has to be possitive
  *
  * a <=b
  * int uint --> (a <=0) || ( b>= (B)a && a<= (A)b)
@@ -28,14 +26,54 @@
  *
  * a <=b
  * int uint --> (a <=0) ||  [ (uint)a <= b | a <= (int)b ]
+ * uint int --> (b >=0) ||  [ (uint)a <= b | a <= (int)b ]
+ *
+ * The question is cast to B or A
+ *
+ *  size A = size B
+ *  uint <= int  A
+ *  int  <= uint B
+ *
+ *  size A > size B
+ *  uint <= int  A
+ *  int  <= uint A
+ *
+ *  size A < size B
+ *  uint <= int B
+ *  int <= uint B
  */
 namespace Range
 {
-    template<size_t a,size_t b>
-    struct _size_compare
+    /*
+     * a <= b resumes to do a casting to a or b base on sizeof B,A and typeof A
+     */
+    template<size_t a,size_t b,bool intA>
+    struct _cast_to_a_
     {
-        constexpr static const char value = (a == b) ? 0 : (a > b) ? 1 : 2;
+        constexpr static const bool value = (a > b) ? true : (a < b) ? false : intA ? false : true;
     };
+    // Casting to A default implementation
+    template<bool cast_to_a = true>
+    struct _less_equal
+    {
+        template <class A,class B>
+        static inline bool le(A a,B b)
+        {
+            return (a <= static_cast<A>(b));
+        }
+    };
+    // Casting to b specialization
+    template<>
+    struct _less_equal<false>
+    {
+        template <class A,class B>
+        static inline bool le(A a,B b)
+        {
+            return (static_cast<B>(a) <= b);
+        }
+    };
+
+
     /*
     promotion will compare doing cast of the first or second type
     if both parameter are equal promotions is done to uint
@@ -61,12 +99,38 @@ namespace Range
     template<>
     struct _impl2_<1>
     {
+        // is it uint less equal than int
+        template<class A,class B>
+        inline static bool uint_le_int(A a,B b)
+        {
+            return (a <= static_cast<A>(b));
+        }
+
+        // is int number less equal than uint
+        template<class A,class B>
+        inline static bool int_le_uint(A a,B b)
+        {
+            return (a<= static_cast<A>(b));
+        }
     };
 
     // sizeof A < sizeof B
     template<>
     struct _impl2_<2>
     {
+        // is it uint less equal than int
+        template<class A,class B>
+        inline static bool uint_le_int(A a,B b)
+        {
+            return (a <= static_cast<A>(b));
+        }
+
+        // is int number less equal than uint
+        template<class A,class B>
+        inline static bool int_le_uint(A a,B b)
+        {
+            return (static_cast<B>(a) <= b);
+        }
     };
 
     /*

@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <iostream>
 #include "GraphBuffer.h"
+#include "numeric_check.h"
 
 
 void DrawEdges() {
