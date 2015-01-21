@@ -17,33 +17,11 @@
 #include <iostream>
 #include "GraphBuffer.h"
 #include "numeric_check.h"
+#include "Edge.h"
 
 #include <functional>
 
-
-void DrawEdges() {
-	const static float mark_size = 0.2;
-	glColor3f(1.0, 0.0, 0.0);
-	glBegin(GL_LINES);
-	glVertex2f(0, -mark_size);
-	glVertex2f(0, 100);
-	glVertex2f(-mark_size, 0);
-	glVertex2f(100, 0);
-
-	for (unsigned i = 0; i < 100; i += 10) {
-		glVertex2f(i,-mark_size);
-		glVertex2f(i, mark_size);
-		glVertex2f(-mark_size,i);
-		glVertex2f(mark_size,i);
-	}
-
-	glColor3f(0.0, 1.0, 0.0);
-
-	glVertex3i(0, 0,0);
-	glVertex3i(0,0,100);
-	glEnd();
-}
-
+Edge    ed;
 
 /* display function - code from:
  http://fly.cc.fer.hr/~unreal/theredbook/chapter01.html
@@ -52,10 +30,14 @@ void DrawEdges() {
 void renderFunction() {
 	glPushMatrix();
 	static unsigned r = 0;
+	glViewport(0,0,200,200);
 	glClearColor(0.5, 0.5, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
-	glOrtho(-100.0, 100.0, -10.0, 10.0, -100.0, 100.0);
+	ed.Draw();
+	glOrtho(-100.0, 100.0, -100.0, 100.0, -10.0, 10.0);
+
+
 	glRotatef(r, 0.01, 1,0);
 	++r %= 360;
 	glBegin(GL_LINE_STRIP);
@@ -66,7 +48,7 @@ void renderFunction() {
 //        glVertex2f(0,1);
 //        glVertex2f(1,0);
 	glEnd();
-	DrawEdges();
+
 	glFlush();
 	glPopMatrix();
 }
@@ -84,7 +66,6 @@ void resized(int, int) {
  the freeglut library does the window creation work for us,
  regardless of the platform. */
 int main(int argc, char** argv) {
-    Range::test();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE);
