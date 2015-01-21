@@ -87,6 +87,9 @@ int main(int argc, char** argv) {
     std::cout << Range::check(u,i,i) << std::endl;
     std::cout << Range::check(u,u,u) << std::endl;
     std::cout << Range::check(i,i,i) << std::endl;
+
+    std::cout << Range::check((char)-1,uint(0),uint(4)) << std::endl;
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE);
 	glutInitWindowSize(500, 500);
