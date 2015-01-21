@@ -10,16 +10,17 @@
 
 
 /*
- * To do safe range check.
+ * To do safe range check between diferents types
+ *
  * We are going to implement less_equal function
  *
  * a <=b
  * int uint --> (a <= 0) || ( b >= (B)a  && a <= (A)b )
  * uint int --> (b >= 0) && ( a <= (A)b  && b >= (B)a )
  *
- * all comparation is done using positive numbers
- *
- * if numbers have same size. int can be safe promoted to uint
+ * all comparations are done using positive numbers
+ * If we promoted one of the numbers in th right way, then one condition can be remove
+ * In the next example only one need to be use
  *
  *  a <= b
  * int  uint --> (a <=0) ||  [ (uint)a <= b | a <= (int)b ]
