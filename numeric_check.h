@@ -48,37 +48,38 @@ namespace Range
      * true means static cast to A
      */
     template<size_t a,size_t b,bool intA>
-    struct _le_cast_to_a_
+    struct _is_le_cast_to_a_
     {
         constexpr static const bool value = (a > b) ? true : (a < b) ? false : intA ? false : true;
     };
-
-    // Casting to A default implementation
-    template<bool cast_to_a = true>
-    struct _less_equal
+    // comparation function using cast
+    template<bool>
+    struct _cast_cmp
     {
         template <class A,class B>
-        static inline bool le(A a,B b)
-        {
-            return (a <= static_cast<A>(b));
-        }
+        static inline bool le(A a,B b);
     };
-    // Casting to b specialization
+    // cast to A implementation
     template<>
-    struct _less_equal<false>
+    template<class A,class B>
+    inline bool _cast_cmp<true>::le(A a,B b)
     {
-        template <class A,class B>
-        static inline bool le(A a,B b)
-        {
-            return (static_cast<B>(a) <= b);
-        }
-    };
+        return (a <= static_cast<A>(b));
+    }
+    // cast to b implementation
+    template<>
+    template<class A,class B>
+    inline bool _cast_cmp<false>::le(A a,B b)
+    {
+        return (static_cast<B>(a) <= b);
+    }
     /*
+     * signed unsigned comparator
      * Parameter
      * is A int, is B int
      */
     template<bool intA,bool intB>
-    struct _impl1_
+    struct _signed_unsigned_cmp
     {
         template<class A,class B>
         static inline bool less_equal(A a,B b)
@@ -88,29 +89,23 @@ namespace Range
     };
     // Specialization for uint int
     template<>
-    struct _impl1_<false,true>
+    template<class A,class B>
+    inline bool _signed_unsigned_cmp<false,true>::less_equal(A a,B b)
     {
-        template<class A,class B>
-        static inline bool less_equal(A a,B b)
-        {
-            return (b >=0) && _less_equal< _le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
-        }
-    };
+        return (b >=0) && _cast_cmp< _is_le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
+    }
     // Specialization for int uint
     template<>
-    struct _impl1_<true,false>
+    template<class A,class B>
+    inline bool _signed_unsigned_cmp<true,false>::less_equal(A a,B b)
     {
-        template<class A,class B>
-        static inline bool less_equal(A a,B b)
-        {
-            return (a <=0) || _less_equal< _le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
-        }
-    };
+       return (a <=0) || _cast_cmp< _is_le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
+    }
 
     template<class A, class B>
-    static bool less_equal(A a, B b)
+    static inline bool less_equal(A a, B b)
     {
-        return _impl1_<std::is_signed<A>::value,std::is_signed<B>::value>::less_equal(a, b);
+        return _signed_unsigned_cmp<std::is_signed<A>::value,std::is_signed<B>::value>::less_equal(a, b);
     }
 
     template<class V, class T>
