@@ -8,6 +8,8 @@
 #ifndef NUMERIC_CHECK_H_
 #define NUMERIC_CHECK_H_
 
+#include <numeric>
+#include "stddef.h"
 
 /*
  * Signed unsigned safe less equal function implementation
