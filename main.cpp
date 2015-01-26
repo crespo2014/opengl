@@ -18,6 +18,8 @@
 #include "GraphBuffer.h"
 #include "numeric_check.h"
 #include "Edge.h"
+#include "Triangles.h"
+#include "utils.h"
 
 #include <functional>
 
@@ -28,17 +30,27 @@ Edge    ed;
  This is the actual usage of the OpenGL library.
  The following code is the same for any platform */
 void renderFunction() {
-	glPushMatrix();
+    glLoadIdentity();
+
 	static unsigned r = 0;
-	glViewport(0,0,200,200);
 	glClearColor(0.5, 0.5, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
-	ed.Draw();
-	glOrtho(-100.0, 100.0, -100.0, 100.0, -10.0, 10.0);
+	//ed.Draw();
+	EquilateralTriangle(50).Draw();
+	Edge(-10,100,-10,100).Draw();
+
+//	glBegin(GL_TRIANGLES);
+//	glColor3f(0.0, 0.0, 1.0);
+//	glVertex2d(0,0);
+//	glColor3f(1.0, 0.0, 0.0);
+//	glVertex2d(10,0);
+//	glColor3f(0.0, 1.0, 0.0);
+//	glVertex2d(0,10);
+//	glEnd();
 
 
-	glRotatef(r, 0.01, 1,0);
+	//glRotatef(r, 0.01, 1,0);
 	++r %= 360;
 	glBegin(GL_LINE_STRIP);
 	for (unsigned i = 0; i < 100; ++i) {
@@ -50,7 +62,6 @@ void renderFunction() {
 	glEnd();
 
 	glFlush();
-	glPopMatrix();
 }
 
 void timing(int v) {
@@ -67,6 +78,10 @@ void resized(int, int) {
  regardless of the platform. */
 int main(int argc, char** argv) {
 
+    const char blah[] = "LST";
+    std::cout << path_to_name<blah>::value << std::endl;
+    //std::cout << path_to_name<346>::value << std::endl;
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE);
 	glutInitWindowSize(500, 500);
@@ -74,6 +89,18 @@ int main(int argc, char** argv) {
 	glutCreateWindow("OpenGL - First window demo");
 	glutDisplayFunc(renderFunction);
 	glutTimerFunc(1000 / 5, timing, 1);
+	// Setup projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	gluOrtho2D(-50,100,-50,100);
+	//glOrtho(-50, 50, -50, 50, -10, 10);
+	//gluPerspective (50, 50/50 /*width/height*/, -10,10);
+	//glViewport(0,0,200,200);   wich portion of the window is use by opengl
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+
 	//glutIdleFunc(renderFunction);
 	//glutReshapeFunc(resized);
 	//glutPostRedisplay();
