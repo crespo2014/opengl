@@ -10,6 +10,9 @@
 
 #include <numeric>
 #include <limits>
+#include <type_traits>
+#include <stdexcept>
+#include <sstream>
 #include "stddef.h"
 
 /*
@@ -46,69 +49,51 @@ namespace Range
      * if sizeof A > sizeof B then casting to A
      * if sizeof A < sizeof B then casting to B
      * if sizeof A == sizeof A then
-     *  if A is signed cast to B else cast to A
-     *
-     * true means static cast to A
+     *  if A is unsigned cast to A else cast to B
      */
-    template<size_t a,size_t b,bool intA>
-    struct is_le_cast_to_a_
-    {
-        constexpr static const bool value = (a > b) ? true : (a < b) ? false : intA ? false : true;
-    };
-    // comparation function using cast
-    template<bool>
+    template<class A, class B>
     struct cast_cmp_
     {
-        template <class A,class B>
-        static inline bool le(A a,B b);
+        using T = typename std::conditional<(sizeof(A) > sizeof(B)) || ((sizeof(A) == sizeof(B) && std::is_unsigned<A>::value)), A, B>::type;
+        static inline bool le(A a,B b)
+        {
+            return static_cast<T>(a) <= static_cast<T>(b);
+        }
     };
-    // cast to A implementation
-    template<>
-    template<class A,class B>
-    inline bool cast_cmp_<true>::le(A a,B b)
-    {
-        return (a <= static_cast<A>(b));
-    }
-    // cast to b implementation
-    template<>
-    template<class A,class B>
-    inline bool cast_cmp_<false>::le(A a,B b)
-    {
-        return (static_cast<B>(a) <= b);
-    }
     /*
-     * signed unsigned comparator
-     * Parameter
-     * is A int, is B int
-     */
-    template<bool intA,bool intB>
-    struct signed_unsigned_cmp_
+    * signed unsigned comparator
+    * Parameter
+    * is A int, is B int
+    */
+    template<bool intA, bool intB>
+    struct int_uint_cmp_
     {
-        template<class A,class B>
-        static inline bool less_equal(A a,B b)
+        template<class A, class B>
+        static inline bool less_equal(A a, B b)
         {
             return a <= b;
         }
     };
     // Specialization for uint int
     template<>
-    template<class A,class B>
-    inline bool signed_unsigned_cmp_<false,true>::less_equal(A a,B b)
+    template<class A, class B>
+    inline bool int_uint_cmp_<false, true>::less_equal(A a, B b)
     {
-        return (b >=0) && cast_cmp_< is_le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
+        return (b >= 0) && cast_cmp_<A,B>::le(a,b);
     }
     // Specialization for int uint
     template<>
-    template<class A,class B>
-    inline bool signed_unsigned_cmp_<true,false>::less_equal(A a,B b)
+    template<class A, class B>
+    inline bool int_uint_cmp_<true, false>::less_equal(A a, B b)
     {
-       return (a <=0) || cast_cmp_< is_le_cast_to_a_<sizeof(A),sizeof(B),std::is_signed<A>::value >::value >::le(a,b);
+        return (a <= 0) || cast_cmp_<A,B>::le(a,b);
     }
 
+    //global function
     template<class A, class B>
     static inline bool less_equal(A a, B b)
     {
-        return signed_unsigned_cmp_<std::is_signed<A>::value,std::is_signed<B>::value>::less_equal(a, b);
+        return int_uint_cmp_<std::is_signed<A>::value,std::is_signed<B>::value>::less_equal(a,b);
     }
 
     template<class V, class T>
@@ -121,7 +106,7 @@ namespace Range
     static bool double_equal(A a,B b)
     {
         static_assert(std::is_floating_point<A>::value && std::is_floating_point<B>::value,"Only floating point arguments are allowed");
-
+        return false;
     }
     /*
      * Struct for number convertion
@@ -137,7 +122,7 @@ namespace Range
            constexpr O min = std::is_floating_point<O>::value ? -std::numeric_limits<O>::max() : std::numeric_limits<O>::min();
            constexpr O max = std::numeric_limits<O>::max();
            if (!check(input,min,max))
-               throw std::out_of_range((Faz::FormatString() << "Value " << input << " is not between " << +min << " and " << +max).str());
+               throw std::out_of_range((std::ostringstream() << "Value " << input << " is not between " << +min << " and " << +max).str());
            return static_cast<O>(input);
         }
     };
@@ -170,24 +155,31 @@ namespace Range
         volatile unsigned char uc = 0xAA;
         volatile int i = -1;
         volatile unsigned int ui = 0xF000;
-        volatile bool b;
 
-        b = less_equal(c, uc);
-        b = less_equal(uc, c);
+        std::cout << std::boolalpha;
 
-        b = less_equal(c, i);
-        b = less_equal(i, c);
+        std::cout << (static_cast<char>(1) <= static_cast<char>(100)) <<std::endl;
 
-        b = less_equal(ui, uc);
-        b = less_equal(uc, ui);
+        std::cout << less_equal(c, uc) << std::endl;
+        std::cout << less_equal(uc, c)<< std::endl;
 
-        b = less_equal(i, uc);
-        b = less_equal(uc, i);
-        b = less_equal(ui, c);
+        std::cout << less_equal(c, i)<< std::endl;
+        std::cout << less_equal(i, c)<< std::endl;
 
-        b = less_equal(c, ui);
-        b= (c <=0) || (static_cast<unsigned int>(c) <= ui);
-        b= (c <=0) || (c <= static_cast<char>(ui));
+        std::cout << less_equal(ui, uc)<< std::endl;
+        std::cout << less_equal(uc, ui)<< std::endl;
+
+        std::cout << less_equal(i, uc)<< std::endl;
+        std::cout << less_equal(uc, i)<< std::endl;
+
+        std::cout << less_equal(ui, c)<< std::endl;
+        std::cout << less_equal(c, ui)<< std::endl;
+
+        std::cout << less_equal(ui, i)<< std::endl;
+        std::cout << less_equal(i, ui)<< std::endl;
+
+        std::cout << ((c <=0) || (static_cast<unsigned int>(c) <= ui))<<std::endl;
+        std::cout << ((c <=0) || (c <= static_cast<char>(ui)))<<std::endl;
     }
 }
 

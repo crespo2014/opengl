@@ -78,9 +78,9 @@ void resized(int, int) {
  regardless of the platform. */
 int main(int argc, char** argv) {
 
-    const char blah[] = "LST";
-    std::cout << path_to_name<blah>::value << std::endl;
-    //std::cout << path_to_name<346>::value << std::endl;
+    Range::test();
+
+
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE);

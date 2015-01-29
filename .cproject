@@ -23,6 +23,7 @@
 									<listOptionValue builtIn="false" value="/usr/X11R6/include/"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.other.970828702" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.level.1561910767" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1245185309" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.372321811" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
