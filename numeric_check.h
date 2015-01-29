@@ -158,8 +158,6 @@ namespace Range
 
         std::cout << std::boolalpha;
 
-        std::cout << (static_cast<char>(1) <= static_cast<char>(100)) <<std::endl;
-
         std::cout << less_equal(c, uc) << std::endl;
         std::cout << less_equal(uc, c)<< std::endl;
 
