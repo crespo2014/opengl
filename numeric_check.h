@@ -266,7 +266,7 @@ namespace Range
 				const char *t = str;
 				while (*t != 0 && *t == ' ') ++t;
 				if ((v == ULONG_MAX) || (*t == '-'))
-					throw std::out_of_range((Faz::FormatString() << str << " is not a valid unsigned number").str());
+					throw std::out_of_range((FormatString() << str << " is not a valid unsigned number").str());
 				return v;
 			}
 		};
@@ -279,7 +279,7 @@ namespace Range
 			char* end;
 			auto v = S::get(str,&end);
 			if (end == str)
-				throw std::invalid_argument(Faz::FormatString()<<"can not extract number from "<<str);
+				throw std::invalid_argument(FormatString()<<"can not extract number from "<<str);
 			return get_safe(v,(T)0);
 		}
 		static bool get(const char* str,T& v,const std::nothrow_t)
@@ -325,7 +325,7 @@ namespace Range
         }
     };
 
-    void test()
+    static void test()
     {
         volatile char c = 7;
         volatile unsigned char uc = 0xAA;

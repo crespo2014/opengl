@@ -17,13 +17,13 @@ public:
     // Draw the edge
     void Draw() const;
 private:
-    int start_x_ = -50;       // start point on x
-    int start_y_ = -50;       // start point on x
-    unsigned size_x_ = 100;   // length of x axis
-    unsigned size_y_ = 100;   // length of y axis
-    unsigned ticks_x_ = 10;   // distance between mark on x axis
-    unsigned ticks_y_ = 10;   // distance between mark on y axis
-    unsigned ticks_size_ = 2;  // size of mark on axis
+    float start_x_ = -50;       // start point on x
+    float start_y_ = -50;       // start point on x
+    float size_x_ = 100;   // length of x axis
+    float size_y_ = 100;   // length of y axis
+    float ticks_x_ = 10;   // distance between mark on x axis
+    float ticks_y_ = 10;   // distance between mark on y axis
+    float ticks_size_ = 2;  // size of mark on axis
 
 };
 

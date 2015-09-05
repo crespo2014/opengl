@@ -13,6 +13,7 @@
 
 
 
+
 template<class T>		// value type
 class GraphBuffer
 {

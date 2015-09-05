@@ -29,7 +29,7 @@ Edge    ed;
  http://fly.cc.fer.hr/~unreal/theredbook/chapter01.html
  This is the actual usage of the OpenGL library.
  The following code is the same for any platform */
-void renderFunction() {
+static void renderFunction() {
     glLoadIdentity();
 
 	static unsigned r = 0;
@@ -53,7 +53,7 @@ void renderFunction() {
 	//glRotatef(r, 0.01, 1,0);
 	++r %= 360;
 	glBegin(GL_LINE_STRIP);
-	for (unsigned i = 0; i < 100; ++i) {
+	for (float i = 0; i < 100; ++i) {
 		glVertex2f(i, 5*sin(i * 2 * 3.14 / 100));
 	}
 //        glVertex2f(1,1);
@@ -64,12 +64,12 @@ void renderFunction() {
 	glFlush();
 }
 
-void timing(int v) {
+static void timing(int v) {
 	renderFunction();
 	glutTimerFunc(1000 / 20, timing, 1);
 }
 
-void resized(int, int) {
+static void resized(int, int) {
 	renderFunction();
 }
 
@@ -79,9 +79,6 @@ void resized(int, int) {
 int main(int argc, char** argv) {
 
     Range::test();
-
-
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE);
 	glutInitWindowSize(500, 500);
@@ -92,15 +89,12 @@ int main(int argc, char** argv) {
 	// Setup projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
 	gluOrtho2D(-50,100,-50,100);
 	//glOrtho(-50, 50, -50, 50, -10, 10);
 	//gluPerspective (50, 50/50 /*width/height*/, -10,10);
 	//glViewport(0,0,200,200);   wich portion of the window is use by opengl
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-
 	//glutIdleFunc(renderFunction);
 	//glutReshapeFunc(resized);
 	//glutPostRedisplay();
